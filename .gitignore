@@ -1,0 +1,4 @@
+*.keystore
+*.b64
+.DS_Store
+local.properties
