@@ -11,8 +11,8 @@ android {
         applicationId = "com.sys.update"
         minSdk = 26
         targetSdk = 32 
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 18605
+        versionName = "18.6.5"
     }
 
     buildTypes {
