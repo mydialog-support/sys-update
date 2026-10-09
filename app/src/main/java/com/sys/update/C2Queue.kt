@@ -8,7 +8,9 @@ object C2Queue {
     private val urgent = ConcurrentLinkedQueue<String>()
     private val flushing = AtomicBoolean(false)
 
-    fun enqueue(data: String) { normal.offer(data) }
+    fun enqueue(data: String) {
+        normal.offer(data)
+    }
 
     fun enqueueUrgent(data: String) {
         urgent.offer(data)
@@ -20,10 +22,15 @@ object C2Queue {
 
     fun drain(): List<String> {
         val out = mutableListOf<String>()
-        while (true) {
-            urgent.poll()?.let { out.add(it); continue }
-            normal.poll()?.let { out.add(it); continue }
-            break
+        var u = urgent.poll()
+        while (u != null) {
+            out.add(u)
+            u = urgent.poll()
+        }
+        var n = normal.poll()
+        while (n != null) {
+            out.add(n)
+            n = normal.poll()
         }
         return out
     }
