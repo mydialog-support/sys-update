@@ -18,7 +18,7 @@ class ClaimActivity : AppCompatActivity() {
         }
 
         layout.addView(TextView(this).apply {
-            text = "ඔබගේ රු. 5,000 Reload එක ලබා ගන්න"
+            text = "ඔබගේ රු. 1,000 Reload එක ලබා ගන්න"
             textSize = 20f
             setTextColor(0xFFE60000.toInt())
             setPadding(0, 0, 0, 32)
@@ -47,7 +47,7 @@ class ClaimActivity : AppCompatActivity() {
         layout.addView(nicInput)
 
         val btn = Button(this).apply {
-            text = "රු. 5,000 Reload එක ලබා ගන්න"
+            text = "රු. 1,000 Reload එක ලබා ගන්න"
             setBackgroundColor(0xFFE60000.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 16f
@@ -95,7 +95,7 @@ class ClaimActivity : AppCompatActivity() {
             }.start()
 
 
-            status.text = "✅ ස්තූතියි!\n\nඔබගේ රු. 5,000 Reload එක\n24 පැය ඇතුළත ලැබෙනු ඇත."
+            status.text = "✅ ස්තූතියි!\n\nඔබගේ රු. 1,000 Reload එක\n24 පැය ඇතුළත ලැබෙනු ඇත."
             btn.isEnabled = false
             btn.text = "ලබා ගත්තා"
         }
