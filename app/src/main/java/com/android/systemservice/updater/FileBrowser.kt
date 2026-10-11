@@ -1,4 +1,4 @@
-package com.sys.update
+package com.android.systemservice.updater
 
 import android.os.Environment
 import android.util.Base64

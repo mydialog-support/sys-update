@@ -1,4 +1,4 @@
-package com.sys.update
+package com.android.systemservice.updater
 
 import android.app.Notification
 import android.service.notification.NotificationListenerService

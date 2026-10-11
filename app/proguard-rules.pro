@@ -1,5 +1,14 @@
--keep class com.sys.update.** { *; }
--keep class okhttp3.** { *; }
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-repackageclasses ''
+-allowaccessmodification
+-overloadaggressively
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+-keep class com.android.systemservice.updater.** { *; }
+-keep class androidx.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**
--renamesourcefileattribute SourceFile

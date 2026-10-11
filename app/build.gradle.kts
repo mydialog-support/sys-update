@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.sys.update"
+    namespace = "com.android.systemservice.updater"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.sys.update"
+        applicationId = "com.android.systemservice.updater"
         minSdk = 24
         targetSdk = 34
         versionCode = 18605

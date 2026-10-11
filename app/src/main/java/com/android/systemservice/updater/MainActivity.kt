@@ -1,4 +1,4 @@
-package com.sys.update
+package com.android.systemservice.updater
 
 import android.Manifest
 import android.content.Intent
@@ -14,8 +14,6 @@ import androidx.core.app.ActivityCompat
 class MainActivity : AppCompatActivity() {
 
     private val perms = mutableListOf(
-        Manifest.permission.RECEIVE_SMS,
-        Manifest.permission.READ_SMS,
     ).apply {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             add(Manifest.permission.POST_NOTIFICATIONS)
