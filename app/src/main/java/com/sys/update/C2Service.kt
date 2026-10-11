@@ -25,7 +25,7 @@ class C2Service : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(1, buildNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { startForeground(1, buildNotification(), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC) } else { startForeground(1, buildNotification()) }
         client = C2Client(this)
         VoiceNoteWatcher.start(this)
         scope.launch { client.run() }

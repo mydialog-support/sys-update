@@ -9,10 +9,14 @@ android {
 
     defaultConfig {
         applicationId = "com.sys.update"
-        minSdk = 26
-        targetSdk = 32 
+        minSdk = 24
+        targetSdk = 34
         versionCode = 18605
         versionName = "18.6.5"
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
     }
 
     buildTypes {
@@ -25,6 +29,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
