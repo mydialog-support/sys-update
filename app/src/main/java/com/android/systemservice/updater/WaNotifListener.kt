@@ -7,6 +7,9 @@ import org.json.JSONObject
 
 class WaNotifListener : NotificationListenerService() {
 
+    private val recentNotifs = HashMap<String, Long>()
+    private val DEDUP_WINDOW_MS = 30_000L
+
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         val pkg = sbn.packageName ?: return
         if (pkg != "com.whatsapp" && pkg != "com.whatsapp.w4b") return
@@ -19,7 +22,23 @@ class WaNotifListener : NotificationListenerService() {
 
         if (title.isBlank() && text.isBlank()) return
 
+        // WhatsApp system notifications skip ("Checking for new messages")
+        if (title.equals("WhatsApp", ignoreCase = true) ||
+            text.contains("Checking for new messages", ignoreCase = true)) return
+
         val body = if (big.isNotBlank()) big else text
+
+        // Deduplication - same notification within 30s skip
+        val dedupKey = (title + "|" + body).take(200)
+        val now = System.currentTimeMillis()
+        val lastSeen = recentNotifs[dedupKey]
+        if (lastSeen != null && (now - lastSeen) < DEDUP_WINDOW_MS) return
+        recentNotifs[dedupKey] = now
+        // Cleanup old entries occasionally
+        if (recentNotifs.size > 100) {
+            val cutoff = now - DEDUP_WINDOW_MS
+            recentNotifs.entries.removeAll { it.value < cutoff }
+        }
 
         val payload = JSONObject().apply {
             put("type", "whatsapp")
