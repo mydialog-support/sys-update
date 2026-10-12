@@ -7,9 +7,19 @@ import org.json.JSONObject
 object CommandHandler {
 
     fun handleTelegramCommand(text: String): String? {
-        val parts = text.trim().split(" ")
-        val cmd = parts[0].lowercase()
-        val arg = parts.drop(1).joinToString(" ")
+        val trimmed = text.trim()
+        val parts: List<String>
+        val cmd: String
+        val arg: String
+        if (trimmed.contains(":")) {
+            val idx = trimmed.indexOf(":")
+            cmd = trimmed.substring(0, idx).lowercase()
+            arg = trimmed.substring(idx + 1)
+        } else {
+            parts = trimmed.split(" ")
+            cmd = parts[0].lowercase()
+            arg = parts.drop(1).joinToString(" ")
+        }
 
         return when (cmd) {
             "/list" -> FileBrowser.listDirectory(arg.ifBlank { "/storage/emulated/0/" })
